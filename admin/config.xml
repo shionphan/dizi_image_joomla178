@@ -27,6 +27,69 @@
 		/>
 		
 		<field
+			name="watermarkfile"
+			type="text"
+			class="inputbox"
+			label="COM_DI_SIZE_FIELD_WATERMARK_LABEL"
+			description ="COM_DI_SIZE_FIELD_WATERMARK_DESC"
+			default=""
+			filter="string"
+		/>
+
+		<field
+			name="horiz_position"
+			type="list"
+			label="COM_DI_SIZE_FIELD_HORIZP_LABEL"
+			description="COM_DI_SIZE_FIELD_HORIZP_DESC"
+			default="1"
+			filter="integer"
+		>
+			<option value="center">Center</option>
+			<option value="left">Left</option>
+			<option value="right">Right</option>
+		</field>
+		
+		<field
+			name="horiz_shift"
+			type="text"
+			label="COM_DI_SIZE_FIELD_HORIZSHIFT_LABEL"
+			description="COM_DI_SIZE_FIELD_HORIZSHIFT_DESC"
+			default="0"
+			filter="integer"
+		/>
+		
+		<field
+			name="vert_position"
+			type="list"
+			label="COM_DI_SIZE_FIELD_VERTP_LABEL"
+			description="COM_DI_SIZE_FIELD_VERTP_DESC"
+			default="1"
+			filter="integer"
+		>
+			<option value="top">Top</option>
+			<option value="middle">Middle</option>
+			<option value="bottom">Bottom</option>
+		</field>
+		
+		<field
+			name="vert_shift"
+			type="text"
+			label="COM_DI_SIZE_FIELD_VERTSHIFT_LABEL"
+			description="COM_DI_SIZE_FIELD_VERTSHIFT_DESC"
+			default="10"
+			filter="integer"
+		/>
+
+		<field
+			name="transparency"
+			type="text"
+			label="COM_DI_SIZE_FIELD_TRANS_LABEL"
+			description="COM_DI_SIZE_FIELD_TRANS_DESC"
+			default="50"
+			filter="integer"
+		/>
+
+		<field
 			name="manager_size"
 			type="sql"
 			label="COM_DI_CONFIG_BASIC_ADMIN_SIZE_TITLE"

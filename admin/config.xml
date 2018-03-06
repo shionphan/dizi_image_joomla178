@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<fieldset
+		name="basic"
+		label="COM_DI_CONFIG_BASIC_SETTINGS_LABEL"
+		description="COM_DI_CONFIG_BASIC_SETTINGS_DESC"
+	>
+		<field
+			name="use_featured"
+			type="list"
+			label="COM_DI_CONFIG_BASIC_USE_FEATURED_TITLE"
+			description="COM_DI_CONFIG_BASIC_USE_FEATURED_DESC"
+			default="1"
+			filter="integer"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		
+		<field
+			name="quality"
+			type="text"
+			label="COM_DI_CONFIG_BASIC_QUALITY_TITLE"
+			description="COM_DI_CONFIG_BASIC_QUALITY_DESC"
+			default="80"
+			filter="integer"
+		/>
+		
+		<field
+			name="manager_size"
+			type="sql"
+			label="COM_DI_CONFIG_BASIC_ADMIN_SIZE_TITLE"
+			description="COM_DI_CONFIG_BASIC_ADMIN_SIZE_DESC"
+			query="SELECT indent FROM #__di_images_sizes"
+			key_field="indent"
+			value_field="indent"
+			default="regular"
+			filter="string"
+		/>
+		
+		<field
+			name="delete_size_images"
+			type="list"
+			label="COM_DI_CONFIG_BASIC_DELETE_SIZE_IMAGES_TITLE"
+			description="COM_DI_CONFIG_BASIC_DELETE_SIZE_IMAGES_DESC"
+			default="1"
+			filter="integer"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		
+		<field
+			name="delete_images_on_content_delete"
+			type="list"
+			label="COM_DI_CONFIG_BASIC_DELETE_IMAGES_TITLE"
+			description="COM_DI_CONFIG_BASIC_DELETE_IMAGES_DESC"
+			default="0"
+			filter="integer"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+	</fieldset>
+	
+	<fieldset
+		name="permissions"
+		label="JCONFIG_PERMISSIONS_LABEL"
+		description="JCONFIG_PERMISSIONS_DESC"
+	>
+		<field
+			name="rules"
+			type="rules"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			class="inputbox"
+			validate="rules"
+			filter="rules"
+			component="com_di"
+			section="component"
+		/>
+	</fieldset>
+</config>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset>
+		<field
+			name="id"
+			type="text"
+			class="readonly"
+			label="COM_DI_SIZE_FIELD_ID_LABEL"
+			description ="COM_DI_SIZE_FIELD_ID_DESC"
+			default="0"
+			readonly="true"
+		/>
+		
+		<field
+			name="template_id"
+			type="text"
+			class="inputbox"
+			label="COM_DI_SIZE_FIELD_TEMPLATE_ID_LABEL"
+			description ="COM_DI_SIZE_FIELD_TEMPLATE_ID_DESC"
+			default="default"
+			filter="string"
+		/>
+		
+		<field
+			name="indent"
+			type="text"
+			class="inputbox"
+			label="COM_DI_SIZE_FIELD_INDENT_LABEL"
+			description ="COM_DI_SIZE_FIELD_INDENT_DESC"
+			default=""
+			filter="string"
+		/>
+		
+		<field
+			name="height"
+			type="text"
+			class="inputbox"
+			label="COM_DI_SIZE_FIELD_HEIGHT_LABEL"
+			description ="COM_DI_SIZE_FIELD_HEIGHT_DESC"
+			default=""
+			filter="integer"
+		/>
+		
+		<field
+			name="width"
+			type="text"
+			class="inputbox"
+			label="COM_DI_SIZE_FIELD_WIDTH_LABEL"
+			description ="COM_DI_SIZE_FIELD_WIDTH_DESC"
+			default=""
+			filter="integer"
+		/>
+		
+		<field
+			name="crop"
+			type="list"
+			class="inputbox"
+			label="COM_DI_SIZE_FIELD_CROP_LABEL"
+			description ="COM_DI_SIZE_FIELD_CROP_DESC"
+			default="0"
+			filter="integer"
+		>
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+	</fieldset>
+</form>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.0" method="upgrade">
+	
+	<name>com_di</name>
+	<creationDate>February 2013</creationDate>
+	<updateDate>06/02/2013</updateDate>
+	<author>Dizi</author>
+	<authorEmail>labs@dizi.lt</authorEmail>
+	<authorUrl>http://www.dizi.lt/labs</authorUrl>
+	<copyright>Copyright (C) 2013 Dizi</copyright>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<version>1.0.3</version>
+	<description>COM_DI_DESCRIPTION</description>
+	
+	<installfile>script.php</installfile>
+  	<uninstallfile>script.php</uninstallfile>
+    
+    <scriptfile>script.php</scriptfile>
+	
+	<install> <!-- Runs on install -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+		</sql>
+	</install>
+	
+	<uninstall> <!-- Runs on uninstall -->
+		<sql>
+			<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+		</sql>
+	</uninstall>
+	
+	<!-- Site Main File  Section --> 
+	<files folder="site">
+	</files>
+	
+	<administration>
+		<!-- Administration Menu Section -->
+		<menu img="../media/com_di/images/di-16x16.png">COM_DI_MENU</menu>
+		
+		<!-- Administration Main File Copy Section --> 
+		<files folder="admin">
+			<!-- Admin Main File Copy Section -->
+			<!-- controllers -->
+			<folder>controllers</folder>
+			<!--  extensions  -->
+			<folder>extensions</folder>
+			<!-- helpers -->
+			<folder>helpers</folder>
+			<!-- libraries -->
+			<folder>libraries</folder>
+			<!-- models -->
+			<folder>models</folder>
+			<!-- sql -->
+			<folder>sql</folder>
+			<!-- tables -->
+			<folder>tables</folder>
+			<!-- views -->
+			<folder>views</folder>
+			
+			<filename>access.xml</filename>
+			<filename>config.xml</filename>
+			<filename>controller.php</filename>
+            <filename>di.php</filename>
+			<filename>di.xml</filename>
+			<filename>script.php</filename>
+			<filename>index.html</filename>
+		</files>
+
+		<languages folder="admin">
+			<language tag="en-GB">language/en-GB/en-GB.com_di.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.com_di.sys.ini</language>
+		</languages>
+	</administration>
+</extension>

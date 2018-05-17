@@ -138,6 +138,7 @@ class DiControllerAjax extends JControllerAdmin
 						rename( $target_file, $media_path . '/' . $new_name );
 						
 						foreach( $sizes as $size ) {
+							
 							$this->create_image(
 								$media_path . '/' . $new_name,
 								$media_path . '/' .  $object_id . '_' . $object_image_id . '_' . $size->indent . '_' . $filename,
@@ -658,128 +659,137 @@ class DiControllerAjax extends JControllerAdmin
 		 */
 		//Add Begin	
 		$watermarkfile = $waterparam['watermarkfile'];
-		$horiz_position = $waterparam['horiz_position'];
-		$horiz_shift = $waterparam['horiz_shift'];
-		$vert_position = $waterparam['vert_position'];
-		$vert_shift = $waterparam['vert_shift'];
-		$transparency = $waterparam['transparency'];
-		$transparency_type = 'alpha';
-		$transcolor = false;
 
-		static $disable_wm_ext_warning, $disable_wm_load_warning, $disable_alpha_warning;
+		if ( isset($watermarkfile) && !empty($watermarkfile) ) {
 
-		if($transparency_type == 'alpha') {
-			$transcolor = FALSE;
-		}
+			$horiz_position = $waterparam['horiz_position'];
+			$horiz_shift = $waterparam['horiz_shift'];
+			$vert_position = $waterparam['vert_position'];
+			$vert_shift = $waterparam['vert_shift'];
+			$transparency = $waterparam['transparency'];
+			$transparency_type = 'alpha';
+			$transcolor = false;
 
-		$sourceType = strtolower(substr($source, strlen($source)-3));
-		switch($sourceType) {
-			case 'png':
-				$source_id = @imagecreatefrompng($source);
-				break;
-			case 'gif':
-				$source_id = @imagecreatefromgif($source);
-				break;
-			case 'jpg':
-				$source_id = @imagecreatefromjpeg($source);
-				break;
-			default:
-				$source = basename($source);
-				if(!$disable_wm_ext_warning) $this->multithumb_msg .= "You cannot use a .$fileType file ($watermarkfile) as a watermark<br />\\n";
-				$disable_wm_ext_warning = true;
+			static $disable_wm_ext_warning, $disable_wm_load_warning, $disable_alpha_warning;
+
+			if($transparency_type == 'alpha') {
+				$transcolor = FALSE;
+			}
+
+			$sourceType = strtolower(substr($source, strlen($source)-3));
+
+			switch($sourceType) {
+				case 'png':
+					$source_id = @imagecreatefrompng($source);
+					break;
+				case 'gif':
+					$source_id = @imagecreatefromgif($source);
+					break;
+				case 'jpg':
+					$source_id = @imagecreatefromjpeg($source);
+					break;
+				default:
+					$source = basename($source);
+					if(!$disable_wm_ext_warning) $this->multithumb_msg .= "You cannot use a .$fileType file ($watermarkfile) as a watermark<br />\\n";
+					$disable_wm_ext_warning = true;
+					return false;
+			}
+
+			//Get the resource ids of the pictures
+			$fileType = strtolower(substr($watermarkfile, strlen($watermarkfile)-3));
+			
+			switch($fileType) {
+				case 'png':
+					$watermarkfile_id = @imagecreatefrompng($watermarkfile);
+					break;
+				case 'gif':
+					$watermarkfile_id = @imagecreatefromgif($watermarkfile);
+					break;
+				case 'jpg':
+					$watermarkfile_id = @imagecreatefromjpeg($watermarkfile);
+					break;
+				default:
+					$watermarkfile = basename($watermarkfile);
+					if(!$disable_wm_ext_warning) $this->multithumb_msg .= "You cannot use a .$fileType file ($watermarkfile) as a watermark<br />\\n";
+					$disable_wm_ext_warning = true;
+					return false;
+			}
+			
+			if(!$watermarkfile_id) {
+				if(!$disable_wm_load_warning) $this->multithumb_msg .= "There was a problem loading the watermark $watermarkfile<br />\\n";
+				$disable_wm_load_warning = true;
 				return false;
-		}
+			}
 
-		//Get the resource ids of the pictures
-		$fileType = strtolower(substr($watermarkfile, strlen($watermarkfile)-3));
-		switch($fileType) {
-			case 'png':
-				$watermarkfile_id = @imagecreatefrompng($watermarkfile);
-				break;
-			case 'gif':
-				$watermarkfile_id = @imagecreatefromgif($watermarkfile);
-				break;
-			case 'jpg':
-				$watermarkfile_id = @imagecreatefromjpeg($watermarkfile);
-				break;
-			default:
-				$watermarkfile = basename($watermarkfile);
-				if(!$disable_wm_ext_warning) $this->multithumb_msg .= "You cannot use a .$fileType file ($watermarkfile) as a watermark<br />\\n";
-				$disable_wm_ext_warning = true;
+			@imageAlphaBlending($watermarkfile_id, false);
+			$result = @imageSaveAlpha($watermarkfile_id, true);
+			if(!$result) {
+				if(!$disable_alpha_warning) $this->multithumb_msg .= "Watermark problem: your server does not support alpha blending (requires GD 2.0.1+)<br />\\n";
+				$disable_alpha_warning = true;
+				imagedestroy($watermarkfile_id);
 				return false;
-		}
-		if(!$watermarkfile_id) {
-			if(!$disable_wm_load_warning) $this->multithumb_msg .= "There was a problem loading the watermark $watermarkfile<br />\\n";
-			$disable_wm_load_warning = true;
-			return false;
-		}
+			}
 
-		@imageAlphaBlending($watermarkfile_id, false);
-		$result = @imageSaveAlpha($watermarkfile_id, true);
-		if(!$result) {
-			if(!$disable_alpha_warning) $this->multithumb_msg .= "Watermark problem: your server does not support alpha blending (requires GD 2.0.1+)<br />\\n";
-			$disable_alpha_warning = true;
+			//Get the sizes of both pix
+			$sourcefile_width=imagesx($source_id);
+			$sourcefile_height=imagesy($source_id);
+			$watermarkfile_width=imagesx($watermarkfile_id);
+			$watermarkfile_height=imagesy($watermarkfile_id);
+
+			switch ($horiz_position) {
+				case 'center':
+					$dest_x = ( $sourcefile_width / 2 ) - ( $watermarkfile_width / 2 );
+					break;
+				case 'left':
+					$dest_x = $horiz_shift;
+					break;
+				case 'right':
+					$dest_x = $sourcefile_width - $watermarkfile_width + $horiz_shift;
+					break;
+			}
+
+			switch ($vert_position) {
+				case 'middle':
+					$dest_y = ( $sourcefile_height / 2 ) - ( $watermarkfile_height / 2 );
+					break;
+				case 'top':
+					$dest_y = $vert_shift;
+					break;
+				case 'bottom':
+					$dest_y = $sourcefile_height - $watermarkfile_height + $vert_shift;
+					break;
+			}
+
+			// if a gif, we have to upsample it to a truecolor image
+			if($fileType == 'gif') {
+				// create an empty truecolor container
+				$tempimage = imagecreatetruecolor($sourcefile_width, $sourcefile_height);
+
+				// copy the 8-bit gif into the truecolor image
+				imagecopy($tempimage, $source, 0, 0, 0, 0, $sourcefile_width, $sourcefile_height);
+
+				// copy the source_id int
+				$source_id = $tempimage;
+			}
+
+			if($transcolor!==false) {
+				imagecolortransparent($watermarkfile_id, $transcolor); // use transparent color
+				imagecopymerge($source_id, $watermarkfile_id, $dest_x, $dest_y, 0, 0, $watermarkfile_width, $watermarkfile_height, $transparency);
+			} else {
+				imagecopy($source_id, $watermarkfile_id, $dest_x, $dest_y, 0, 0, $watermarkfile_width, $watermarkfile_height); // True alphablend
+			}
+
 			imagedestroy($watermarkfile_id);
-			return false;
+			header("Content-type: image/jpeg");
+			imagejpeg($source_id,$target,100);
+			imagedestroy($source_id);
+			$image = new JImage($target);
 		}
-
-		//Get the sizes of both pix
-		$sourcefile_width=imagesx($source_id);
-		$sourcefile_height=imagesy($source_id);
-		$watermarkfile_width=imagesx($watermarkfile_id);
-		$watermarkfile_height=imagesy($watermarkfile_id);
-
-		switch ($horiz_position) {
-			case 'center':
-				$dest_x = ( $sourcefile_width / 2 ) - ( $watermarkfile_width / 2 );
-				break;
-			case 'left':
-				$dest_x = $horiz_shift;
-				break;
-			case 'right':
-				$dest_x = $sourcefile_width - $watermarkfile_width + $horiz_shift;
-				break;
+		else {
+			$image = new JImage($source);	
 		}
-
-		switch ($vert_position) {
-			case 'middle':
-				$dest_y = ( $sourcefile_height / 2 ) - ( $watermarkfile_height / 2 );
-				break;
-			case 'top':
-				$dest_y = $vert_shift;
-				break;
-			case 'bottom':
-				$dest_y = $sourcefile_height - $watermarkfile_height + $vert_shift;
-				break;
-		}
-
-		// if a gif, we have to upsample it to a truecolor image
-		if($fileType == 'gif') {
-			// create an empty truecolor container
-			$tempimage = imagecreatetruecolor($sourcefile_width, $sourcefile_height);
-
-			// copy the 8-bit gif into the truecolor image
-			imagecopy($tempimage, $source, 0, 0, 0, 0, $sourcefile_width, $sourcefile_height);
-
-			// copy the source_id int
-			$source_id = $tempimage;
-		}
-
-		if($transcolor!==false) {
-			imagecolortransparent($watermarkfile_id, $transcolor); // use transparent color
-			imagecopymerge($source_id, $watermarkfile_id, $dest_x, $dest_y, 0, 0, $watermarkfile_width, $watermarkfile_height, $transparency);
-		} else {
-			imagecopy($source_id, $watermarkfile_id, $dest_x, $dest_y, 0, 0, $watermarkfile_width, $watermarkfile_height); // True alphablend
-		}
-
-		imagedestroy($watermarkfile_id);
-		header("Content-type: image/jpeg");
-		imagejpeg($source_id,$target,100);
-		imagedestroy($source_id);
-		$image = new JImage($target);
+		
 		//Add End;
-
-		//$image = new JImage( $source );
 		
 		if( !empty( $crop ) )
 			//$image->crop( $width, $height, $x, $y, false );
